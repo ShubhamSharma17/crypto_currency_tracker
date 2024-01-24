@@ -32,7 +32,6 @@ class CryptoCurrency {
   final double atl;
   final double atlChangePercentage;
   final DateTime atlDate;
-  final Roi roi;
   final DateTime lastUpdated;
 
   CryptoCurrency({
@@ -60,7 +59,6 @@ class CryptoCurrency {
     required this.atl,
     required this.atlChangePercentage,
     required this.atlDate,
-    required this.roi,
     required this.lastUpdated,
   });
 
@@ -82,16 +80,15 @@ class CryptoCurrency {
         marketCapChange24H: json["market_cap_change_24h"]?.toDouble(),
         marketCapChangePercentage24H:
             json["market_cap_change_percentage_24h"]?.toDouble(),
-        circulatingSupply: json["circulating_supply"]?.toDouble(),
-        totalSupply: json["total_supply"]?.toDouble(),
-        maxSupply: json["max_supply"]?.toDouble(),
+        circulatingSupply: json["circulating_supply"]?.toDouble() ?? 0.0,
+        totalSupply: json["total_supply"]?.toDouble() ?? 0.0,
+        maxSupply: json["max_supply"]?.toDouble() ?? 0.0,
         ath: json["ath"]?.toDouble(),
         athChangePercentage: json["ath_change_percentage"]?.toDouble(),
         athDate: DateTime.parse(json["ath_date"]),
         atl: json["atl"]?.toDouble(),
         atlChangePercentage: json["atl_change_percentage"]?.toDouble(),
         atlDate: DateTime.parse(json["atl_date"]),
-        roi: Roi.fromJson(json["roi"]),
         lastUpdated: DateTime.parse(json["last_updated"]),
       );
 
@@ -120,7 +117,6 @@ class CryptoCurrency {
         "atl": atl,
         "atl_change_percentage": atlChangePercentage,
         "atl_date": atlDate.toIso8601String(),
-        "roi": roi.toJson(),
         "last_updated": lastUpdated.toIso8601String(),
       };
 }
