@@ -1,30 +1,47 @@
+import 'package:crypto_currency_tracker/constands/theme.dart';
+import 'package:crypto_currency_tracker/models/local_storage.dart';
 import 'package:crypto_currency_tracker/page/home_page.dart';
 import 'package:crypto_currency_tracker/provider/market_provider.dart';
+import 'package:crypto_currency_tracker/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  String currentTheme = await LocalStorage.gatTheme() ?? "light";
+  runApp(MyApp(
+    theme: currentTheme,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String theme;
+
+  const MyApp({super.key, required this.theme});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<MarketProvider>(
-          create: (context) => MarketProvider(),
-        ),
-        // second provider
-      ],
-      child: const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Crypto Currency Tracker',
-        home: Homepage(),
-      ),
-    );
+        providers: [
+          ChangeNotifierProvider<MarketProvider>(
+            create: (context) => MarketProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => ThemeProvider(theme),
+          ),
+        ],
+        child: Consumer<ThemeProvider>(
+          builder: (context, themeProveder, child) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              themeMode: themeProveder.themeMode,
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              title: 'Crypto Currency Tracker',
+              home: Homepage(),
+            );
+          },
+        ));
   }
 }
