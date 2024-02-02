@@ -1,9 +1,6 @@
-import 'package:crypto_currency_tracker/constands/colors.dart';
-import 'package:crypto_currency_tracker/models/cryptocurrency.dart';
-import 'package:crypto_currency_tracker/page/detail_page.dart';
-import 'package:crypto_currency_tracker/provider/market_provider.dart';
+import 'package:crypto_currency_tracker/page/favourit.dart';
+import 'package:crypto_currency_tracker/page/market.dart';
 import 'package:crypto_currency_tracker/provider/theme_provider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +11,14 @@ class Homepage extends StatefulWidget {
   State<Homepage> createState() => _HomepageState();
 }
 
-class _HomepageState extends State<Homepage> {
+class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
+  late TabController viewController;
+  @override
+  void initState() {
+    viewController = TabController(length: 2, vsync: this);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeProvider themeProvider =
@@ -53,94 +57,33 @@ class _HomepageState extends State<Homepage> {
                 ],
               ),
               const SizedBox(height: 0),
+              TabBar(
+                controller: viewController,
+                tabs: [
+                  Tab(
+                    child: Text(
+                      "Market",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                  Tab(
+                    child: Text(
+                      "Favourit",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
               Expanded(
-                child: Consumer<MarketProvider>(
-                  builder: (context, marketProvider, child) {
-                    if (marketProvider.isLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else {
-                      if (marketProvider.markets.isNotEmpty) {
-                        return RefreshIndicator(
-                          onRefresh: () async {
-                            await marketProvider.fetchData();
-                          },
-                          child: ListView.builder(
-                            physics: const BouncingScrollPhysics(
-                                parent: AlwaysScrollableScrollPhysics()),
-                            itemCount: marketProvider.markets.length,
-                            itemBuilder: (context, index) {
-                              CryptoCurrency cryptoCurrency =
-                                  marketProvider.markets[index];
-                              return ListTile(
-                                onTap: () {
-                                  Navigator.push(context, CupertinoPageRoute(
-                                    builder: (context) {
-                                      return DetailsPage(id: cryptoCurrency.id);
-                                    },
-                                  ));
-                                },
-                                contentPadding: EdgeInsets.zero,
-                                title: Text(
-                                  cryptoCurrency.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 17,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  cryptoCurrency.symbol.toUpperCase(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                leading: CircleAvatar(
-                                  backgroundColor: white,
-                                  backgroundImage:
-                                      NetworkImage(cryptoCurrency.image),
-                                ),
-                                trailing: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      "₹ ${cryptoCurrency.currentPrice.toStringAsFixed(3)}",
-                                      style: const TextStyle(
-                                        color: blue0395eb,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Builder(builder: (context) {
-                                      double priceChange =
-                                          cryptoCurrency.priceChange24H;
-                                      double priceChangePercentage =
-                                          cryptoCurrency
-                                              .priceChangePercentage24H;
-
-                                      if (priceChange < 0) {
-                                        return Text(
-                                          "$priceChangePercentage% (${priceChange.toStringAsFixed(3)})",
-                                          style: const TextStyle(color: red),
-                                        );
-                                      } else {
-                                        return Text(
-                                          "$priceChangePercentage% (+${priceChange.toStringAsFixed(3)})",
-                                          style: const TextStyle(color: green),
-                                        );
-                                      }
-                                    }),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      } else {
-                        return const Text("Data Not Found");
-                      }
-                    }
-                  },
+                child: TabBarView(
+                  physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  controller: viewController,
+                  children: const [
+                    MarketsPage(),
+                    FavouritPage(),
+                  ],
                 ),
               ),
             ],

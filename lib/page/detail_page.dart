@@ -104,12 +104,12 @@ class _DetailsPageState extends State<DetailsPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         titleAndDetails(
-                            "Low 24H",
-                            "₹ ${cryptoCurrency.low24H.toStringAsFixed(3)}",
+                            "Price Change 24H",
+                            "₹ ${cryptoCurrency.priceChange24H.toStringAsFixed(3)}",
                             CrossAxisAlignment.start),
                         titleAndDetails(
-                            "High 24H",
-                            "₹ ${cryptoCurrency.high24H.toString()}",
+                            "Price Change % 24H",
+                            "% ${cryptoCurrency.priceChangePercentage24H.toStringAsFixed(3)}",
                             CrossAxisAlignment.end),
                       ],
                     ),

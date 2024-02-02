@@ -33,8 +33,10 @@ class CryptoCurrency {
   final double atlChangePercentage;
   final DateTime atlDate;
   final DateTime lastUpdated;
+  bool isFavourite;
 
   CryptoCurrency({
+    required this.isFavourite,
     required this.id,
     required this.symbol,
     required this.name,
@@ -63,6 +65,7 @@ class CryptoCurrency {
   });
 
   factory CryptoCurrency.fromJson(Map<String, dynamic> json) => CryptoCurrency(
+        isFavourite: json["isFavourite"] ?? false,
         id: json["id"],
         symbol: json["symbol"],
         name: json["name"],
