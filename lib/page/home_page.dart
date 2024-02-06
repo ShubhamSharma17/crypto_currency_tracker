@@ -1,6 +1,8 @@
 import 'package:crypto_currency_tracker/page/favourit.dart';
 import 'package:crypto_currency_tracker/page/market.dart';
+import 'package:crypto_currency_tracker/provider/auth_provider.dart';
 import 'package:crypto_currency_tracker/provider/theme_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +25,23 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     ThemeProvider themeProvider =
         Provider.of<ThemeProvider>(context, listen: false);
+    AuthenticationProviders authProvider =
+        Provider.of<AuthenticationProviders>(context, listen: false);
     return Scaffold(
+      appBar: AppBar(actions: [
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () {
+            authProvider.signOut();
+            Navigator.popUntil(context, (route) => route.isFirst);
+            Navigator.pushReplacement(context, CupertinoPageRoute(
+              builder: (context) {
+                return const Homepage();
+              },
+            ));
+          },
+        ),
+      ]),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.only(top: 20, left: 15, right: 15),

@@ -1,27 +1,22 @@
-import 'dart:developer';
-
 import 'package:crypto_currency_tracker/constands/colors.dart';
 import 'package:crypto_currency_tracker/methods/validation.dart';
-import 'package:crypto_currency_tracker/page/auth/signup_page.dart';
-import 'package:crypto_currency_tracker/page/home_page.dart';
 import 'package:crypto_currency_tracker/provider/auth_provider.dart';
 import 'package:crypto_currency_tracker/provider/theme_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpPageState extends State<SignUpPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  UserCredential? userCredential;
+  TextEditingController cPasswordController = TextEditingController();
   late bool checkValidation;
 
   @override
@@ -33,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Login ",
+          "Sign Up ",
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.w500,
@@ -86,33 +81,35 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 20),
+              // confirmpassword text feild
+              TextField(
+                controller: cPasswordController,
+                decoration: InputDecoration(
+                  hintText: "Enter Your Confirm Password.....",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
               CupertinoButton(
                 color: blue,
                 child: const Text(
-                  "Log In",
+                  "Sign Up",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                onPressed: () async {
+                onPressed: () {
                   checkValidation = Validation.checkValidation(
-                    emailController.text.trim(),
-                    passwordController.text.trim(),
-                  );
+                      emailController.text.trim(),
+                      passwordController.text.trim());
                   if (checkValidation) {
-                    userCredential = await authProvider.login(
-                        emailController.text.trim(),
-                        passwordController.text.trim());
-                    log("checking... ${userCredential!.user!.uid}");
-                    // below line for handle (don't use builde context in async method )
-                    if (!context.mounted) return;
-                    Navigator.popUntil(context, (route) => route.isFirst);
-                    Navigator.pushReplacement(context, CupertinoPageRoute(
-                      builder: (context) {
-                        return const Homepage();
-                      },
-                    ));
+                    // AuthMethods.signUp(emailController.text.trim(),
+                    //     passwordController.text.trim(), context);
+                    authProvider.signUp(emailController.text.trim(),
+                        passwordController.text.trim(), context);
                   }
                 },
               )
@@ -126,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "Don't have a account?",
+              "Do you have account?",
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
             const SizedBox(width: 10),
@@ -137,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                 }));
               },
               child: const Text(
-                "Sign Up",
+                "Log In",
                 style: TextStyle(
                   color: blue,
                   fontWeight: FontWeight.w500,

@@ -1,8 +1,11 @@
 import 'package:crypto_currency_tracker/constands/theme.dart';
 import 'package:crypto_currency_tracker/models/local_storage.dart';
 import 'package:crypto_currency_tracker/page/auth/login_page.dart';
+import 'package:crypto_currency_tracker/page/home_page.dart';
+import 'package:crypto_currency_tracker/provider/auth_provider.dart';
 import 'package:crypto_currency_tracker/provider/market_provider.dart';
 import 'package:crypto_currency_tracker/provider/theme_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,8 +32,11 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<MarketProvider>(
             create: (context) => MarketProvider(),
           ),
-          ChangeNotifierProvider(
+          ChangeNotifierProvider<ThemeProvider>(
             create: (context) => ThemeProvider(theme),
+          ),
+          ChangeNotifierProvider<AuthenticationProviders>(
+            create: (context) => AuthenticationProviders(),
           ),
         ],
         child: Consumer<ThemeProvider>(
@@ -41,7 +47,9 @@ class MyApp extends StatelessWidget {
               theme: lightTheme,
               darkTheme: darkTheme,
               title: 'Crypto Currency Tracker',
-              home: const LoginPage(),
+              home: FirebaseAuth.instance.currentUser != null
+                  ? const Homepage()
+                  : const LoginPage(),
               // home: const Homepage(),
             );
           },
